@@ -1,0 +1,160 @@
+
+            .custom-form {
+                margin-bottom: 1rem;
+            }
+
+            .custom-form label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .custom-form input[type="text"],
+            .custom-form input[type="email"],
+            .custom-form input[type="date"] {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .custom-form-section {
+                margin-bottom: 2rem;
+            }
+
+            .custom-form-title {
+                margin-bottom: 1rem;
+            }
+
+            .custom-pricing-info {
+               
+                margin-bottom: 2rem;
+            }
+            .custom-pricing-info p{
+              padding-left: 200px;
+            }
+            .title-1{
+              padding-bottom: 30px;
+            }
+
+            .custom-pricing-block h2,
+            .custom-pricing-block h3 {
+                color: #fff;
+            }
+
+            .custom-pricing-block p {
+                color: #aaa;
+                margin-bottom: 2.5rem;
+            }
+
+            .custom-button {
+                background: rgb(0, 119, 255);
+                color: #fff;
+                padding: 0.5rem 1rem;
+                border: none;
+                cursor: pointer;
+            }
+
+            .container-fluid {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding-top: 20px;
+            }
+            select:-moz-focusring {
+                color: transparent;
+                text-shadow: 0 0 0 #afafaf;
+              }
+              
+              textarea {
+                resize: none;
+              }
+              
+              .ul-checkout {
+                list-style: none;
+              }
+              
+              /* FORM ELEMENTS
+              –––––––––––––––––––––––––––––––––––––––––––––––––– */
+              .my-form{
+                margin: 1.5rem;
+              }
+              .my-form h1 {
+                margin-bottom: 1.5rem;
+              }
+              
+              .my-form li,
+              .my-form .grid > *:not(:last-child) {
+                margin-bottom: 1.5rem;
+              }
+              
+              .my-form select,
+              .my-form input,
+              .my-form textarea,
+              .my-form button {
+                width: 100%;
+                line-height: 1.5;
+                padding: 15px 10px;
+                border: 1px solid hsl(0, 0%, 10%);
+                color: #afafaf;
+                background: hsl(0, 0%, 14%);
+                transition: background-color 0.3s cubic-bezier(0.57, 0.21, 0.69, 1.25),
+                  transform 0.3s cubic-bezier(0.57, 0.21, 0.69, 1.25);
+              }
+              
+              .my-form textarea {
+                height: 170px;
+              }
+              
+              
+              
+              
+              
+              
+              /* MQ
+              –––––––––––––––––––––––––––––––––––––––––––––––––– */
+              @media screen and (min-width: 600px) {
+                .my-form .grid {
+                  display: grid;
+                  grid-gap: 1.5rem;
+                }
+              
+                .my-form .grid-2 {
+                  grid-template-columns: 1fr 1fr;
+                }
+              
+                .my-form .grid-3 {
+                  grid-template-columns: auto auto auto;
+                  align-items: center;
+                }
+              
+                .my-form .grid > *:not(:last-child) {
+                  margin-bottom: 0;
+                }
+              
+                .my-form .required-msg {
+                  display: block;
+                }
+              }
+              
+              @media screen and (min-width: 541px) {
+                .my-form input[type="checkbox"] + label::before {
+                  top: 50%;
+                  transform: translateY(-50%);
+                }
+              
+                .my-form input[type="checkbox"]:checked + label::after {
+                  top: 3px;
+                }
+              }
+
+              .btn-checkout{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+              .btn-checkout button{
+                min-width: 200px;
+                cursor: pointer;
+              }
+            .title-checkout{
+              font-size: 30px;
+              padding-bottom: 5px;
+            }

@@ -1,0 +1,14 @@
+/* Login.css */
+.login-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 50px;
+}
+
+/* Customize Bootstrap styles if needed */
+.error-message{
+    color: red;
+}
