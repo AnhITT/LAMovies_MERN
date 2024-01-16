@@ -1,0 +1,7 @@
+/* HomePage.css */
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Căn giữa theo chiều cao của màn hình */
+}

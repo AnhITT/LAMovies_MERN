@@ -1,18 +1,16 @@
 import axiosClient from "../api/axiosClient";
 
 const END_POINT = {
-    ACCOUNT: "Account",
-    SHOWACCOUNT: "ShowAccount",
+    ACCOUNT: "users",
     DISABLEACCOUNT: "ChangeStatus",
-    DELETEACCOUNT: "DeleteAccount",
-    ADDACCOUNT: "AddAccount",
+    DELETEACCOUNT: "delete",
+    ADDACCOUNT: "add",
     ROLES: "getAllRoles",
-    GETBYID: "DetailAccount",
-    UPDATEACCOUNT: "UpdateAccount",
+    UPDATEACCOUNT: "edit",
 };
 
 const GetAccountAPI = () => {
-    return axiosClient.get(`${END_POINT.ACCOUNT}/${END_POINT.SHOWACCOUNT}`);
+    return axiosClient.get(`${END_POINT.ACCOUNT}`);
 };
 const GetAllRolesAPI = () => {
     return axiosClient.get(`${END_POINT.ACCOUNT}/${END_POINT.ROLES}`);
@@ -24,7 +22,7 @@ const DisabledAccountAPI = (id, status) => {
 };
 const DeleteAccountAPI = (id) => {
     return axiosClient.delete(
-        `${END_POINT.ACCOUNT}/${END_POINT.DELETEACCOUNT}?id=${id}`
+        `${END_POINT.ACCOUNT}/${END_POINT.DELETEACCOUNT}/${id}`
     );
 };
 const AddAccountAPI = (accountData) => {
@@ -39,13 +37,11 @@ const AddAccountAPI = (accountData) => {
     );
 };
 const GetUserByIdAPI = (id) => {
-    return axiosClient.get(
-        `${END_POINT.ACCOUNT}/${END_POINT.GETBYID}?id=${id}`
-    );
+    return axiosClient.get(`${END_POINT.ACCOUNT}/${id}`);
 };
-const UpdateUserAPI = (data) => {
-    return axiosClient.patch(
-        `${END_POINT.ACCOUNT}/${END_POINT.UPDATEACCOUNT}`,
+const UpdateUserAPI = (id, data) => {
+    return axiosClient.put(
+        `${END_POINT.ACCOUNT}/${END_POINT.UPDATEACCOUNT}/${id}`,
         data,
         {
             headers: {

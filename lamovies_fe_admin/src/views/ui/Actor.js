@@ -29,7 +29,8 @@ const Actor = () => {
         fetchData();
     }, []);
     const fetchData = async () => {
-        setItems(await GetActorAPI());
+        const data = await GetActorAPI();
+        setItems(data.data);
     };
     const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(0);
@@ -101,8 +102,8 @@ const Actor = () => {
     };
     const handleEditUser = async (userId) => {
         try {
-            const user = await GetActorById(userId);
-
+            const data = await GetActorById(userId);
+            const user = data.data;
             setNewActor({
                 name: user.name,
                 avarta: user.avarta,
@@ -116,13 +117,10 @@ const Actor = () => {
     };
     const handleUpdateUser = async () => {
         try {
-            // Gọi API để cập nhật thông tin người dùng
             await UpdateActorAPI(edit, newActor);
 
-            // Đóng form chỉnh sửa
             setEditUserModal(false);
 
-            // Làm mới danh sách người dùng
             fetchData();
         } catch (error) {
             console.error("Error updating user:", error);
@@ -319,7 +317,7 @@ const Actor = () => {
                                                     color="primary"
                                                     size="sm"
                                                     onClick={() =>
-                                                        handleEditUser(item.id)
+                                                        handleEditUser(item._id)
                                                     }
                                                 >
                                                     Edit
@@ -330,7 +328,7 @@ const Actor = () => {
                                                     size="sm"
                                                     onClick={() => {
                                                         setAccountIdToDelete(
-                                                            item.id
+                                                            item._id
                                                         );
                                                         setConfirmationModal(
                                                             true

@@ -10,7 +10,6 @@ const Movies = ({ items, title }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 8;
-
     // Lọc phim dựa trên tìm kiếm
     const filteredMovies = items.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -18,12 +17,12 @@ const Movies = ({ items, title }) => {
     const offset = currentPage * itemsPerPage;
     const currentItems = filteredMovies.slice(offset, offset + itemsPerPage);
     const pageCount = Math.ceil(filteredMovies.length / itemsPerPage);
+    console.log(items);
 
     // Xử lý sự kiện khi người dùng chuyển trang
     const handlePageClick = (data) => {
         setCurrentPage(data.selected);
     };
-
     return (
         <>
             <section className="list-movies">
@@ -43,7 +42,7 @@ const Movies = ({ items, title }) => {
 
                     <ul className="movies-list">
                         {currentItems.map((item) => (
-                            <Movie key={item.id} item={item} />
+                            <Movie key={item._id} item={item} />
                         ))}
                     </ul>
                     <div className="pagination-container">

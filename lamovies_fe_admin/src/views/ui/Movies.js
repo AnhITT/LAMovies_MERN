@@ -3,10 +3,10 @@ import { Row, Col, Table, Card, CardTitle, CardBody, Button } from "reactstrap";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import ReactPaginate from "react-paginate";
 import {
-    UpdateMovieAPI,
-    ShowDetail,
+    // UpdateMovieAPI,
+    // ShowDetail,
     AddMovieAPI,
-    DeleteMovieAPI,
+    // DeleteMovieAPI,
     GetMovieAPI,
 } from "../../api/movie";
 import { GetGenreAPI } from "../../api/genre";
@@ -27,21 +27,22 @@ const Movies = () => {
     const [editUserModal, setEditUserModal] = useState(false);
     const [edit, setEdit] = useState("");
     const [newMovie, setNewMovie] = useState({
-        Name: "",
-        Description: "",
-        UrlTrailer: "",
-        UrlImg: "",
-        UrlImgCover: "",
-        SubLanguage: "",
-        MinAge: "",
-        Quality: "",
-        Time: "",
-        YearCreate: "",
-        Type: "",
-        View: 0,
-        Episodes: "",
-        Genres: [],
-        Actor: [],
+        name: "",
+        description: "",
+        urlTrailer: "",
+        urlImg: "",
+        urlImgCover: "",
+        subLanguage: "",
+        minAge: "",
+        quality: "",
+        time: "",
+        yearCreate: "",
+        type: "",
+        view: "",
+        actors: [],
+        genres: [],
+        oddmovie: "",
+        seriesmovie: [],
     });
     const [editMovie, setEditMovie] = useState({
         Id: "",
@@ -113,12 +114,16 @@ const Movies = () => {
     };
 
     const fetchData = async () => {
-        setItems(await GetMovieAPI());
+        const movie = await GetMovieAPI();
+        setItems(movie.data);
     };
     const fetchDataAddEdit = async () => {
-        setGenreOptions(await GetGenreAPI());
-        setActorOptions(await GetActorAPI());
-        setItems(await GetMovieAPI());
+        const genre = await GetGenreAPI();
+        setGenreOptions(genre.data);
+        const actor = await GetActorAPI();
+        setActorOptions(actor.data);
+        const movie = await GetMovieAPI();
+        setItems(movie.data);
     };
     const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(0);
@@ -147,7 +152,7 @@ const Movies = () => {
     };
     const confirmDeleteMovie = async () => {
         try {
-            await DeleteMovieAPI(movieIdToDelete);
+            //await DeleteMovieAPI(movieIdToDelete);
             fetchData();
             setConfirmationModal(false);
         } catch (error) {
@@ -172,25 +177,25 @@ const Movies = () => {
     const handleEditUser = async (id) => {
         try {
             fetchDataAddEdit();
-            const movie = await ShowDetail(id);
-            setEditMovie({
-                Id: movie.id,
-                Name: movie.name,
-                Description: movie.description,
-                UrlTrailer: movie.urlTrailer,
-                UrlImg: movie.urlImg,
-                UrlImgCover: movie.urlImgCover,
-                SubLanguage: movie.subLanguage,
-                MinAge: movie.minAge,
-                Quality: movie.quality,
-                Time: movie.time,
-                YearCreate: movie.yearCreate,
-                Type: movie.type,
-                View: movie.view,
-                Episodes: movie.episodes,
-                Genres: movie.genres,
-                Actor: movie.actor,
-            });
+            //const movie = await ShowDetail(id);
+            // setEditMovie({
+            //     Id: movie.id,
+            //     Name: movie.name,
+            //     Description: movie.description,
+            //     UrlTrailer: movie.urlTrailer,
+            //     UrlImg: movie.urlImg,
+            //     UrlImgCover: movie.urlImgCover,
+            //     SubLanguage: movie.subLanguage,
+            //     MinAge: movie.minAge,
+            //     Quality: movie.quality,
+            //     Time: movie.time,
+            //     YearCreate: movie.yearCreate,
+            //     Type: movie.type,
+            //     View: movie.view,
+            //     Episodes: movie.episodes,
+            //     Genres: movie.genres,
+            //     Actor: movie.actor,
+            // });
             setEdit(id);
             setEditUserModal(true);
         } catch (error) {
@@ -199,7 +204,7 @@ const Movies = () => {
     };
     const handleUpdateUser = async () => {
         try {
-            await UpdateMovieAPI(editMovie);
+            //await UpdateMovieAPI(editMovie);
             setEditUserModal(false);
             fetchData();
             toggleSuccessModal();
@@ -272,31 +277,7 @@ const Movies = () => {
                                                 </span>
                                             </div>
                                         </th>
-                                        <th className="sort">
-                                            <div>
-                                                <span>Id</span>
-                                                <span className="p-2">
-                                                    <i
-                                                        className="fa-solid fa-arrow-down-long"
-                                                        onClick={() =>
-                                                            HandleSort(
-                                                                "desc",
-                                                                "id"
-                                                            )
-                                                        }
-                                                    ></i>
-                                                    <i
-                                                        className="fa-solid fa-arrow-up-long"
-                                                        onClick={() =>
-                                                            HandleSort(
-                                                                "asc",
-                                                                "id"
-                                                            )
-                                                        }
-                                                    ></i>
-                                                </span>
-                                            </div>
-                                        </th>
+
                                         <th className="sort">
                                             <div>
                                                 <span>Time</span>
@@ -372,7 +353,6 @@ const Movies = () => {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>{item.id}</td>
                                             <td>{item.time}</td>
                                             <td>{item.view}</td>
 
@@ -468,7 +448,7 @@ const Movies = () => {
                             <form>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="Name"
+                                        htmlFor="name"
                                         className="form-label"
                                     >
                                         Name
@@ -477,18 +457,18 @@ const Movies = () => {
                                         type="text"
                                         className="form-control"
                                         id="Name"
-                                        value={newMovie.Name}
+                                        value={newMovie.name}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                Name: e.target.value,
+                                                name: e.target.value,
                                             })
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="Description"
+                                        htmlFor="description"
                                         className="form-label"
                                     >
                                         Description
@@ -496,19 +476,19 @@ const Movies = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="Description"
-                                        value={newMovie.Description}
+                                        id="description"
+                                        value={newMovie.description}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                Description: e.target.value,
+                                                description: e.target.value,
                                             })
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="UrlTrailer"
+                                        htmlFor="urlTrailer"
                                         className="form-label"
                                     >
                                         UrlTrailer
@@ -516,19 +496,19 @@ const Movies = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="UrlTrailer"
-                                        value={newMovie.UrlTrailer}
+                                        id="urlTrailer"
+                                        value={newMovie.urlTrailer}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                UrlTrailer: e.target.value,
+                                                urlTrailer: e.target.value,
                                             })
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="UrlImg"
+                                        htmlFor="urlImg"
                                         className="form-label"
                                     >
                                         UrlImg
@@ -536,19 +516,19 @@ const Movies = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="UrlImg"
-                                        value={newMovie.UrlImg}
+                                        id="urlImg"
+                                        value={newMovie.urlImg}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                UrlImg: e.target.value,
+                                                urlImg: e.target.value,
                                             })
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="UrlImgCover"
+                                        htmlFor="urlImgCover"
                                         className="form-label"
                                     >
                                         UrlImgCover
@@ -556,12 +536,12 @@ const Movies = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="UrlImgCover"
-                                        value={newMovie.UrlImgCover}
+                                        id="urlImgCover"
+                                        value={newMovie.urlImgCover}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                UrlImgCover: e.target.value,
+                                                urlImgCover: e.target.value,
                                             })
                                         }
                                     />
@@ -569,7 +549,7 @@ const Movies = () => {
 
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="MinAge"
+                                        htmlFor="minAge"
                                         className="form-label"
                                     >
                                         MinAge
@@ -577,19 +557,19 @@ const Movies = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="MinAge"
-                                        value={newMovie.MinAge}
+                                        id="minAge"
+                                        value={newMovie.minAge}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                MinAge: e.target.value,
+                                                minAge: e.target.value,
                                             })
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="Episodes"
+                                        htmlFor="episodes"
                                         className="form-label"
                                     >
                                         Episodes
@@ -597,19 +577,19 @@ const Movies = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="Episodes"
-                                        value={newMovie.Episodes}
+                                        id="episodes"
+                                        value={newMovie.episodes}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                Episodes: e.target.value,
+                                                episodes: e.target.value,
                                             })
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="Time"
+                                        htmlFor="time"
                                         className="form-label"
                                     >
                                         Time
@@ -617,19 +597,19 @@ const Movies = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="Time"
-                                        value={newMovie.Time}
+                                        id="time"
+                                        value={newMovie.time}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                Time: e.target.value,
+                                                time: e.target.value,
                                             })
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="YearCreate"
+                                        htmlFor="yearCreate"
                                         className="form-label"
                                     >
                                         Year Create
@@ -637,31 +617,31 @@ const Movies = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="YearCreate"
-                                        value={newMovie.YearCreate}
+                                        id="yearCreate"
+                                        value={newMovie.yearCreate}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                YearCreate: e.target.value,
+                                                yearCreate: e.target.value,
                                             })
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="Quality"
+                                        htmlFor="quality"
                                         className="form-label"
                                     >
                                         Quality
                                     </label>
                                     <select
                                         className="form-select"
-                                        id="Quality"
-                                        value={newMovie.Quality}
+                                        id="quality"
+                                        value={newMovie.quality}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                Quality: e.target.value,
+                                                quality: e.target.value,
                                             })
                                         }
                                     >
@@ -676,19 +656,19 @@ const Movies = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="SubLanguage"
+                                        htmlFor="subLanguage"
                                         className="form-label"
                                     >
                                         Language
                                     </label>
                                     <select
                                         className="form-select"
-                                        id="SubLanguage"
-                                        value={newMovie.SubLanguage}
+                                        id="subLanguage"
+                                        value={newMovie.subLanguage}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                SubLanguage: e.target.value,
+                                                subLanguage: e.target.value,
                                             })
                                         }
                                     >
@@ -706,19 +686,19 @@ const Movies = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label
-                                        htmlFor="Type"
+                                        htmlFor="type"
                                         className="form-label"
                                     >
                                         Type
                                     </label>
                                     <select
                                         className="form-select"
-                                        id="Type"
-                                        value={newMovie.Type}
+                                        id="type"
+                                        value={newMovie.type}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                Type: e.target.value,
+                                                type: e.target.value,
                                             })
                                         }
                                     >
@@ -733,21 +713,21 @@ const Movies = () => {
                                         </option>
                                     </select>
                                 </div>
-                                <div className="mb-3">
+                                {/* <div className="mb-3">
                                     <label
-                                        htmlFor="Genres"
+                                        htmlFor="genres"
                                         className="form-label"
                                     >
                                         Genres
                                     </label>
                                     <select
                                         className="form-select"
-                                        id="Genres"
-                                        value={newMovie.Genres}
+                                        id="genres"
+                                        value={newMovie.genres}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                Genres: Array.from(
+                                                genres: Array.from(
                                                     e.target.selectedOptions,
                                                     (option) =>
                                                         parseInt(
@@ -761,8 +741,8 @@ const Movies = () => {
                                     >
                                         {genreOptions.map((genre) => (
                                             <option
-                                                key={genre.id}
-                                                value={genre.id}
+                                                key={genre._id}
+                                                value={genre._id}
                                             >
                                                 {genre.name}
                                             </option>
@@ -784,17 +764,17 @@ const Movies = () => {
                                     <select
                                         className="form-select"
                                         id="Actor"
-                                        value={newMovie.Actor}
+                                        value={newMovie.actors}
                                         onChange={(e) =>
                                             setNewMovie({
                                                 ...newMovie,
-                                                Actor: Array.from(
+                                                actors: Array.from(
                                                     e.target.selectedOptions,
                                                     (option) =>
                                                         parseInt(
                                                             option.value,
                                                             10
-                                                        ) // Parse value as integer
+                                                        )
                                                 ),
                                             })
                                         }
@@ -802,8 +782,8 @@ const Movies = () => {
                                     >
                                         {actorOptions.map((genre) => (
                                             <option
-                                                key={genre.id}
-                                                value={genre.id}
+                                                key={genre._id}
+                                                value={genre._id}
                                             >
                                                 {genre.name}
                                             </option>
@@ -813,7 +793,7 @@ const Movies = () => {
                                         className="text-danger"
                                         asp-validation-for="Actor"
                                     ></span>
-                                </div>
+                                </div> */}
                             </form>
                             {error.map((error, index) => (
                                 <p
@@ -1109,7 +1089,7 @@ const Movies = () => {
                                         </option>
                                     </select>
                                 </div>
-                                <div className="mb-3">
+                                {/* <div className="mb-3">
                                     <label
                                         htmlFor="Genres"
                                         className="form-label"
@@ -1137,8 +1117,8 @@ const Movies = () => {
                                     >
                                         {genreOptions.map((genre) => (
                                             <option
-                                                key={genre.id}
-                                                value={genre.id}
+                                                key={genre._id}
+                                                value={genre._id}
                                             >
                                                 {genre.name}
                                             </option>
@@ -1148,9 +1128,9 @@ const Movies = () => {
                                         className="text-danger"
                                         asp-validation-for="Genres"
                                     ></span>
-                                </div>
+                                </div> */}
 
-                                <div className="mb-3">
+                                {/* <div className="mb-3">
                                     <label
                                         htmlFor="Actor"
                                         className="form-label"
@@ -1189,7 +1169,7 @@ const Movies = () => {
                                         className="text-danger"
                                         asp-validation-for="Actor"
                                     ></span>
-                                </div>
+                                </div> */}
                             </form>
                         </ModalBody>
                         <ModalFooter>

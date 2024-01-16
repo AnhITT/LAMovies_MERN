@@ -3,34 +3,32 @@ import '../../components/watch/style.css';
 import { useParams } from 'react-router-dom';
 import { GetURLSeriesMovies, GetMovieByID } from '~/api/homes/home';
 import { CheckPricing } from '~/api/pricing/pricing';
-import AuthService from '~/service/auth/auth-service';
+//import * as Auth from '~/api/auth/auth';
 
 const WatchMovieSeries = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState([]);
     const [url, setUrl] = useState([]);
-    const [currentUser, setCurrentUser] = useState(undefined);
+    //const [currentUser, setCurrentUser] = useState(undefined);
     const [check, setCheck] = useState();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (AuthService.getCurrentUser()) {
-                setCurrentUser(await AuthService.getCurrentUser());
-            }
-        };
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         setCurrentUser(await Auth.GetMyInfo());
+    //     };
 
-        fetchData();
-    }, []);
+    //     fetchData();
+    // }, []);
 
-    useEffect(() => {
-        const fetchPricing = async () => {
-            if (currentUser) {
-                setCheck(await CheckPricing(currentUser.Id));
-            }
-        };
+    // useEffect(() => {
+    //     const fetchPricing = async () => {
+    //         if (currentUser) {
+    //             setCheck(await CheckPricing(currentUser.Id));
+    //         }
+    //     };
 
-        fetchPricing();
-    }, [currentUser]);
+    //     fetchPricing();
+    // }, [currentUser]);
     useEffect(() => {
         const fetchData = async () => {
             const movieData = await GetMovieByID(id);

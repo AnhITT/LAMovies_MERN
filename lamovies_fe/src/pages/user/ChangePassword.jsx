@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './style.css';
 import { ChangePasswordAPI } from '~/api/account/account';
-import AuthService from '~/service/auth/auth-service';
+import * as Auth from '~/api/auth/auth';
 import { Link } from 'react-router-dom';
 
 const ChangePassword = () => {
@@ -26,9 +26,7 @@ const ChangePassword = () => {
     }, [currentUser]);
 
     const fetchData = async () => {
-        if (AuthService.getCurrentUser()) {
-            setCurrentUser(await AuthService.getCurrentUser());
-        }
+        setCurrentUser(await Auth.GetMyInfo());
     };
 
     const handleInputChange = (e) => {

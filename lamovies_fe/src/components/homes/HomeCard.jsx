@@ -2,21 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const HomeCard = ({
-    item: {
-        id,
-        urlImgCover,
-        name,
-        quality,
-        view,
-        time,
-        description,
-        starring,
-        genreNames,
-        actorNames,
-        minAge,
-        tags,
-        type,
-    },
+    item: { _id, urlImgCover, name, quality, view, time, description, genres, actors, minAge, type },
 }) => {
     return (
         <>
@@ -42,21 +28,21 @@ const HomeCard = ({
                         <div className="cast">
                             <h4>
                                 <span>Starring </span>
-                                {actorNames && actorNames.join(', ')}
+                                {actors && actors.map((actor) => actor.name).join(', ')}
                             </h4>
                             <h4>
                                 <span>Genres </span>
-                                {genreNames && genreNames.join(', ')}
+                                {genres && genres.map((genre) => genre.name).join(', ')}
                             </h4>
                         </div>
                         {type === 'oddMovies' ? (
-                            <Link to={`/watchmovie/${id}`}>
+                            <Link to={`/watchmovie/${_id}`}>
                                 <button className="btn-play primary-btn">
                                     <i className="fas fa-play"></i> PLAY NOW
                                 </button>
                             </Link>
                         ) : (
-                            <Link to={`/watchmovieseries/${id}`}>
+                            <Link to={`/watchmovieseries/${_id}`}>
                                 <button className="btn-play primary-btn">
                                     <i className="fas fa-play"></i> PLAY NOW
                                 </button>
@@ -64,7 +50,7 @@ const HomeCard = ({
                         )}
                     </div>
                     <div className="palyButton row">
-                        <Link to={`/singlepage/${id}`}>
+                        <Link to={`/singlepage/${_id}`}>
                             <button>
                                 <div className="img">
                                     <img src="./images/play-button.png" alt="" />

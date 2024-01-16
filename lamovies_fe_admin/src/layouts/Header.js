@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import AuthService from "../service/auth-service";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import CustomDropdownItem from "./loader/CustomDropdownItem";
 import {
@@ -35,15 +34,15 @@ const Header = () => {
         document.getElementById("sidebarArea").classList.toggle("showSidebar");
     };
     const handleLogout = () => {
-        AuthService.logout();
+        // AuthService.logout();
         navigate("/login");
     };
     const toggleNotificationDropdown = () =>
         setNotificationDropdownOpen((prevState) => !prevState);
     useEffect(() => {
-        if (!AuthService.checkRoleUser()) {
-            handleLogout();
-        }
+        // if (!AuthService.checkRoleUser()) {
+        //     handleLogout();
+        // }
     }, []);
     return (
         <Navbar color="primary" dark expand="md">

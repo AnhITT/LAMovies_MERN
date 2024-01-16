@@ -1,33 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import '../../components/watch/style.css';
 import { useParams } from 'react-router-dom';
 import { GetMovieByID, GetURLOddMovie } from '~/api/homes/home';
-import { CheckPricing } from '~/api/pricing/pricing';
 import { CreateRoom } from '~/api/room/room';
-import AuthService from '~/service/auth/auth-service';
+import { AppContext } from '~/context/AppProvider';
 import { useHistory } from 'react-router-dom';
+import { Check } from '~/api/order/Order';
 
 const WatchMovie = () => {
     const history = useHistory();
     const { id } = useParams();
     const [movie, setMovie] = useState([]);
-    const [url, setUrl] = useState([]);
-    const [currentUser, setCurrentUser] = useState(undefined);
     const [check, setCheck] = useState();
-    useEffect(() => {
-        const fetchData = async () => {
-            if (AuthService.getCurrentUser()) {
-                setCurrentUser(await AuthService.getCurrentUser());
-            }
-        };
-
-        fetchData();
-    }, []);
+    const { currentUser } = useContext(AppContext);
 
     useEffect(() => {
         const fetchPricing = async () => {
-            if (currentUser) {
-                setCheck(await CheckPricing(currentUser.Id));
+            if (currentUser && currentUser._id) {
+                console.log(currentUser);
+                const result = await Check(currentUser._id);
+                if (result) {
+                    setCheck(result);
+                }
             }
         };
 
@@ -36,18 +30,17 @@ const WatchMovie = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const movieData = await GetMovieByID(id);
-            setMovie(movieData);
+            console.log(check);
             if (check) {
-                const data = await GetURLOddMovie(movieData.id);
-                setUrl(data);
+                const movieData = await GetMovieByID(id);
+                setMovie(movieData);
             }
         };
         fetchData();
     }, [check, id]);
     const handleWatchWithFriends = async () => {
         try {
-            const response = await CreateRoom(movie.name, currentUser.Id);
+            const response = await CreateRoom(movie.name, currentUser._id);
             history.push(`/room/${response}/${id}`);
         } catch (error) {
             console.error('Error creating room:', error);
@@ -55,15 +48,17 @@ const WatchMovie = () => {
     };
     return (
         <>
-            {check === true ? (
+            {check && check.sucess === true ? (
                 <>
                     <section className="singlePage">
                         <div className="singleHeading">
-                            <h1>Movie {movie.name} </h1> <span> | {movie.time} | </span> <span> {movie.quality} </span>
+                            <h1>Movie {movie.data && movie.data.name} </h1>{' '}
+                            <span> | {movie.data && movie.data.time} | </span>{' '}
+                            <span> {movie.data && movie.data.quality} </span>
                         </div>
                         <div className="container">
                             <iframe
-                                src={url.url}
+                                src={movie.data && movie.data.oddmovie.url}
                                 width="100%"
                                 height="605px"
                                 frameBorder="0"
@@ -78,7 +73,7 @@ const WatchMovie = () => {
 
                             <div className="para">
                                 <h3>Description:</h3>
-                                <p>{movie.description}</p>
+                                <p>{movie.data && movie.data.description}</p>
                             </div>
                             <div className="soical">
                                 <h3>Share : </h3>
@@ -92,7 +87,9 @@ const WatchMovie = () => {
             ) : (
                 <section className="singlePage">
                     <div className="singleHeading">
-                        <h1>Movie {movie.name} </h1> <span> | {movie.time} | </span> <span> {movie.quality} </span>
+                        <h1>Movie {movie.data && movie.data.name} </h1>{' '}
+                        <span> | {movie.data && movie.data.time} | </span>{' '}
+                        <span> {movie.data && movie.data.quality} </span>
                     </div>
                     <div className="container">
                         <div className="para">

@@ -33,7 +33,7 @@ const MoviesCom = ({ items, title }) => {
 
                     <ul className="movies-list">
                         {currentItems.map((item) => (
-                            <Movie key={item.id} item={item} />
+                            <Movie key={item._id} item={item} />
                         ))}
                     </ul>
                     <div className="pagination-container">

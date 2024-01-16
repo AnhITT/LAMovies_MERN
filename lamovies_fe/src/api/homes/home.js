@@ -1,8 +1,8 @@
 import axiosClient from '~/api/axios/axiosClient';
 
 const END_POINT = {
-    MOVIES: 'Movie',
-    TOP6MOVIES: 'GetTop6MovieView',
+    MOVIES: 'movies',
+    TOP6MOVIES: 'getTop6MovieView',
     GetURLOddMovie: 'GetURLOddMovie?id=',
     GetMovieByID: 'GetMovieById?id=',
     GetURLSeriesMovies: 'GetURLSeriesMovies?id=',
@@ -20,6 +20,6 @@ const GetURLSeriesMovies = (id, tap) => {
     return axiosClient.get(`${END_POINT.MOVIES}/${END_POINT.GetURLSeriesMovies}${id}&tap=${tap}`);
 };
 const GetMovieByID = (id) => {
-    return axiosClient.get(`${END_POINT.MOVIES}/${END_POINT.GetMovieByID}${id}`);
+    return axiosClient.get(`${END_POINT.MOVIES}/${id}`);
 };
 export { GetURLSeriesMovies, GetMovieByID, GetURLOddMovie, GetMovieAPI, GetTop6MovieView };

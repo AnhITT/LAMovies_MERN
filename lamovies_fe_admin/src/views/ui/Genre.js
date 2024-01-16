@@ -7,7 +7,8 @@ const Genre = () => {
         fetchData();
     }, []);
     const fetchData = async () => {
-        setItems(await GetGenreAPI());
+        const genres = await GetGenreAPI();
+        setItems(genres.data);
     };
 
     return (

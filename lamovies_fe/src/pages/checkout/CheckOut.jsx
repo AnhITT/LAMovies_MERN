@@ -1,64 +1,80 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { AppContext } from '~/context/AppProvider';
 import './style.css';
-import { GetPricingByIdAPI } from '~/api/pricing/pricing';
-import AuthService from '~/service/auth/auth-service';
-import { Link, useParams } from 'react-router-dom';
+import { useLocation, Link, useParams } from 'react-router-dom';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { ToastContainer, toast } from 'react-toastify';
-import { CreateOrder } from '~/api/order/Order';
+import { CreateOrder, Check } from '~/api/order/Order';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CheckOut = () => {
-    const { id } = useParams();
-    const [currentUser, setCurrentUser] = useState(undefined);
-    const [pricing, setPricing] = useState([]);
+    const location = useLocation();
+    const { item } = location.state || {};
+    const { currentUser } = useContext(AppContext);
     const currentDate = new Date();
     const dateStart = new Date();
-    dateStart.setDate(currentDate.getDate() + pricing.time);
-    const formattedDateStart = `${dateStart.getDate()}/${dateStart.getMonth() + 1}/${dateStart.getFullYear()}`;
     const dateEnd = new Date(dateStart);
-    dateEnd.setMonth(dateStart.getMonth() + pricing.time);
+    const [dataOrder, setDataOrder] = useState({
+        users: '',
+        pricings: '',
+        startTime: '',
+        endTime: '',
+        totalAmount: '',
+    });
+    dateStart.setDate(currentDate.getDate() + item.time);
+    dateEnd.setMonth(dateStart.getMonth() + item.time);
+    const formattedDateStart = `${dateStart.getDate()}/${dateStart.getMonth() + 1}/${dateStart.getFullYear()}`;
     const formattedDateEnd = `${dateEnd.getDate()}/${dateEnd.getMonth() + 1}/${dateEnd.getFullYear()}`;
-    useEffect(() => {
-        fetchData();
-    }, []);
-    const fetchData = async () => {
-        const pricingData = await GetPricingByIdAPI(id);
-        setPricing(pricingData);
-        console.log(pricingData);
-        if (AuthService.getCurrentUser()) {
-            setCurrentUser(await AuthService.getCurrentUser());
-        }
-    };
     const onApproveOrder = (data, actions) => {
-        return actions.order.capture().then((details) => {
-            CreateOrder(currentUser.Id, pricing.id);
-            toast.success('', {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'dark',
+        return actions.order.capture().then(async (details) => {
+            const formattedDateStart = dateStart.toISOString();
+            const formattedDateEnd = dateEnd.toISOString();
+            setDataOrder({
+                users: currentUser._id,
+                pricings: item._id,
+                startTime: formattedDateStart,
+                endTime: formattedDateEnd,
+                totalAmount: item.price,
             });
         });
     };
+    useEffect(() => {
+        const sendDataOrderToApi = async () => {
+            try {
+                await CreateOrder(dataOrder);
+                toast.success('Register Service Successful!', {
+                    position: 'top-right',
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            } catch (error) {
+                console.error('Error calling CreateOrder API:', error);
+            }
+        };
+
+        if (dataOrder.users !== '' && dataOrder.pricings !== '') {
+            sendDataOrderToApi();
+        }
+    }, [dataOrder]);
+
     const onCreateOrder = (data, actions) => {
         const uniqueSku = `sku-${Date.now()}`;
         return actions.order.create({
             purchase_units: [
                 {
-                    name: pricing.name,
+                    name: item.name,
                     quantity: '1',
                     sku: uniqueSku,
                     tax: '0',
-                    description: `${pricing.time} month`,
+                    description: `${item.time} month`,
                     amount: {
-                        value: pricing.price,
+                        value: item.price,
                     },
-                    value: pricing.price,
+                    value: item.price,
                 },
             ],
         });
@@ -85,13 +101,13 @@ const CheckOut = () => {
                                             type="text"
                                             placeholder="Full Name"
                                             required
-                                            value={currentUser ? currentUser.FullName : ''}
+                                            value={currentUser ? currentUser.fullName : ''}
                                         />
                                         <input
                                             type="text"
                                             placeholder="Username"
                                             required
-                                            value={currentUser ? currentUser.Username : ''}
+                                            value={currentUser ? currentUser.userName : ''}
                                         />
                                     </div>
                                 </li>
@@ -101,12 +117,12 @@ const CheckOut = () => {
                                             type="email"
                                             placeholder="Email"
                                             required
-                                            value={currentUser ? currentUser.Email : ''}
+                                            value={currentUser ? currentUser.email : ''}
                                         />
                                         <input
                                             type="text"
                                             placeholder="Date Birthday"
-                                            value={currentUser ? currentUser.Date : ''}
+                                            value={currentUser ? currentUser.dateBirthday : ''}
                                         />
                                     </div>
                                 </li>
@@ -132,18 +148,6 @@ const CheckOut = () => {
                                                 onApprove={(data, actions) => onApproveOrder(data, actions)}
                                                 onCancel={() => {}}
                                             />
-                                            <ToastContainer
-                                                position="top-right"
-                                                autoClose={5000}
-                                                hideProgressBar={false}
-                                                newestOnTop={false}
-                                                closeOnClick
-                                                rtl={false}
-                                                pauseOnFocusLoss
-                                                draggable
-                                                pauseOnHover
-                                                theme="dark"
-                                            />
                                         </div>
                                         <Link to="/">
                                             <button className="btn-grid" type="reset">
@@ -155,20 +159,20 @@ const CheckOut = () => {
                             </ul>
                         </form>
                     </section>
-                    {pricing ? (
+                    {item ? (
                         <section className="custom-pricing-info">
                             <article className="custom-pricing-block">
                                 <hgroup className="title-1">
                                     <h2>Information Pricing</h2>
                                 </hgroup>
                                 <p>
-                                    <strong>Name:</strong> {pricing.name}
+                                    <strong>Name:</strong> {item.name}
                                 </p>
                                 <p>
-                                    <strong>Price:</strong> ${pricing.price}
+                                    <strong>Price:</strong> ${item.price}
                                 </p>
                                 <p>
-                                    <strong>Time:</strong> {pricing.time} months
+                                    <strong>Time:</strong> {item.time} months
                                 </p>
                                 <p>
                                     <strong>Date Start:</strong> {formattedDateStart}
@@ -177,7 +181,7 @@ const CheckOut = () => {
                                     <strong>Date End:</strong> {formattedDateEnd}
                                 </p>
                                 <p>
-                                    <strong>Total:</strong> ${pricing.price}
+                                    <strong>Total:</strong> ${item.price}
                                 </p>
                             </article>
                         </section>
@@ -186,6 +190,18 @@ const CheckOut = () => {
                     )}
                 </div>
             </main>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
         </>
     );
 };

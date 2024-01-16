@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { GetMovieByID, GetURLOddMovie } from '~/api/homes/home';
 import { CheckPricing } from '~/api/pricing/pricing';
-import AuthService from '~/service/auth/auth-service';
+//import * as Auth from '~/api/auth/auth';
 import './style.css';
 import Peer from 'peerjs';
 import Modal from 'react-modal'; // Import thư viện react-modal
@@ -18,15 +18,13 @@ const Room = () => {
     const remoteVideoRef = useRef(null);
     const currentUserVideoRef = useRef(null);
     const peerInstance = useRef(null);
-    useEffect(() => {
-        const fetchData = async () => {
-            if (AuthService.getCurrentUser()) {
-                setCurrentUser(await AuthService.getCurrentUser());
-            }
-        };
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         setCurrentUser(await Auth.GetMyInfo());
+    //     };
 
-        fetchData();
-    }, []);
+    //     fetchData();
+    // }, []);
 
     useEffect(() => {
         const fetchPricing = async () => {

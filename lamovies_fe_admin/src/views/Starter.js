@@ -12,8 +12,14 @@ const Starter = () => {
         fetchData();
     }, []);
     const fetchData = async () => {
-        setThongke(await ThongKe());
+        const items = await ThongKe();
+        setThongke(items.data);
+        console.log(items);
     };
+    if (!thongke || !thongke.top1View || thongke.top1View.length === 0) {
+        // Nếu không có giá trị hoặc không có phần tử, có thể hiển thị một thông báo hoặc không hiển thị gì cả
+        return <div>Loading...</div>;
+    }
     return (
         <div>
             {/***Top Cards***/}
@@ -32,7 +38,7 @@ const Starter = () => {
                         bg="bg-light-danger text-danger"
                         title="Refunds"
                         subtitle="Total Accounts"
-                        earning={thongke.countAccount}
+                        earning={thongke.countUsers}
                         icon="bi bi-coin"
                     />
                 </Col>
@@ -41,7 +47,7 @@ const Starter = () => {
                         bg="bg-light-warning text-warning"
                         title="New Project"
                         subtitle="Total Actors"
-                        earning={thongke.countActor}
+                        earning={thongke.countActors}
                         icon="bi bi-basket3"
                     />
                 </Col>
@@ -50,7 +56,7 @@ const Starter = () => {
                         bg="bg-light-info text-into"
                         title="Sales"
                         subtitle="Total Genres"
-                        earning={thongke.countGenre}
+                        earning={thongke.countGenres}
                         icon="bi bi-bag"
                     />
                 </Col>
@@ -61,7 +67,7 @@ const Starter = () => {
                         bg="bg-light-success text-success"
                         title="Profit"
                         subtitle="Top 1 view Movies"
-                        earning={thongke.top1Movie}
+                        earning={thongke.top1View[0]?.name || "N/A"}
                         icon="bi bi-wallet"
                     />
                 </Col>
@@ -70,7 +76,7 @@ const Starter = () => {
                         bg="bg-light-danger text-danger"
                         title="Refunds"
                         subtitle="Total Movies Series"
-                        earning={thongke.countMoviesSeries}
+                        earning={thongke.countSeries}
                         icon="bi bi-coin"
                     />
                 </Col>
@@ -79,7 +85,7 @@ const Starter = () => {
                         bg="bg-light-warning text-warning"
                         title="New Project"
                         subtitle="Total Movies Odd"
-                        earning={thongke.countMoviesOdd}
+                        earning={thongke.countOdd}
                         icon="bi bi-basket3"
                     />
                 </Col>
@@ -88,7 +94,7 @@ const Starter = () => {
                         bg="bg-light-info text-into"
                         title="Sales"
                         subtitle="Total User Use Services"
-                        earning={thongke.countAccountUseService}
+                        earning={thongke.countService}
                         icon="bi bi-bag"
                     />
                 </Col>

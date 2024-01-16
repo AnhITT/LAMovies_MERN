@@ -1,7 +1,7 @@
 import axiosClient from "../api/axiosClient";
 
 const END_POINT = {
-    GENRES: "Genre",
+    GENRES: "genres",
 };
 
 const GetGenreAPI = () => {

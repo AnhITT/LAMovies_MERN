@@ -1,9 +1,9 @@
 import axiosClient from "../api/axiosClient";
 
 const END_POINT = {
-    MOVIES: "Movie",
-    THONGKE: "ThongKe",
-    CreateMovie: "CreateMovie",
+    MOVIES: "movies",
+    THONGKE: "thongke",
+    CreateMovie: "add",
     ShowDetail: "ShowDetail",
 };
 

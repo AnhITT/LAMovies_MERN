@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import './style.css';
 import axios from 'axios';
-import { setAuthToken } from '../../service/auth/auth-header';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
-    const [username, setUsername] = useState('');
+    const [userName, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const validate = () => {
-        if (!username && !password) {
+        if (!userName && !password) {
             setError({ error: 'Please enter username and password!' });
             return false;
-        } else if (!username) {
+        } else if (!userName) {
             setError({ error: 'Please enter a username!' });
             return false;
         } else if (!password) {
@@ -27,8 +27,8 @@ const Login = () => {
         if (validate()) {
             axios
                 .post(
-                    'https://localhost:7279/api/Auth/login',
-                    { username, password },
+                    'http://localhost:3000/authen/login',
+                    { userName, password },
                     {
                         headers: {
                             'Content-Type': 'application/json',
@@ -37,19 +37,14 @@ const Login = () => {
                 )
                 .then((response) => {
                     if (response.status === 200) {
-                        console.log(response.data.token);
-                        localStorage.setItem('token', response.data.token);
-                        setAuthToken(response.data.token);
-                        window.location.href = '/';
+                        window.location.href = '/?loginSuccess=true';
                     } else {
-                        setError({ error: response.data.error });
-                        console.log(response.data.error);
+                        setError({ error: response.data });
                     }
                 })
                 .catch((error) => {
                     if (error.response) {
-                        setError({ error: error.response.data.error });
-                        console.log(error.response.data.error);
+                        setError({ error: error.response.data.data });
                     } else {
                         console.log('Error:', error.message);
                     }
@@ -73,7 +68,7 @@ const Login = () => {
                                 className="input100"
                                 type="text"
                                 placeholder="Username"
-                                value={username}
+                                value={userName}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
                             <span className="focus-input100"></span>
@@ -105,6 +100,18 @@ const Login = () => {
                     </form>
                 </div>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
         </div>
     );
 };

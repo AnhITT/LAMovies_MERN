@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import './pricing.css';
 import { GetPricingAPI } from '~/api/pricing/pricing';
-import Pricing from './Pricing';
+import Pricing from './PricingCard';
 
 const Pricings = () => {
-    const [pricing, setPricing] = useState([]);
-    useEffect(() => {
-        fetchData();
-    }, []);
-    const fetchData = async () => {
-        setPricing(await GetPricingAPI());
-    };
+    // const [pricing, setPricing] = useState([]);
+    // useEffect(() => {
+    //     fetchData();
+    // }, []);
+    // const fetchData = async () => {
+    //     setPricing(await GetPricingAPI());
+    // };
+    // console.log(pricing);
     return (
         <>
-            <main className="container">
+            {/* <main className="container">
                 <div className="grid">
                     {pricing.map((item) => {
                         return (
@@ -23,7 +24,7 @@ const Pricings = () => {
                         );
                     })}
                 </div>
-            </main>
+            </main> */}
         </>
     );
 };

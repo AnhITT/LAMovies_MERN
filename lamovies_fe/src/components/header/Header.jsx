@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './header.css';
-import AuthService from '~/service/auth/auth-service';
+import { GetMyInfo, Logout } from '~/api/auth/auth';
+import { AppContext } from '~/context/AppProvider';
 
 const Header = () => {
     const [Mobile, setMobile] = useState(false);
-    const [currentUser, setCurrentUser] = useState(undefined);
-    useEffect(() => {
-        if (AuthService.getCurrentUser()) {
-            setCurrentUser(AuthService.getCurrentUser());
-        }
-    }, []);
-
+    const { currentUser } = useContext(AppContext);
     const logout = () => {
-        AuthService.logout();
+        Logout();
         window.location.href = '/';
     };
     return (
@@ -58,7 +53,7 @@ const Header = () => {
                         <Link to="/notifications">
                             <i className="fas fa-bell"></i>
                         </Link>
-                        {currentUser ? (
+                        {currentUser.userName ? (
                             <div>
                                 <Link to="/userinfo">
                                     <i className="fas fa-user"></i>

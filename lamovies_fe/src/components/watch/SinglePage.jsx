@@ -3,7 +3,6 @@ import './style.css';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { GetMovieAPI } from '~/api/homes/home';
-
 import Upcomming from '../upcoming/Upcomming';
 import ReactPlayer from 'react-player';
 const SinglePage = () => {
@@ -17,11 +16,11 @@ const SinglePage = () => {
         };
 
         fetchData();
-    }, []); // Fetch data on mount
+    }, []);
 
     useEffect(() => {
-        if (movie.length > 0) {
-            const selectedItem = movie.find((movieItem) => movieItem.id === parseInt(id));
+        if (movie && movie.data && movie.data.length > 0) {
+            const selectedItem = movie.data.find((movieItem) => movieItem._id === id);
             if (selectedItem) {
                 setItem(selectedItem);
             }
@@ -66,7 +65,7 @@ const SinglePage = () => {
                             </div>
                         </div>
                     </section>
-                    <Upcomming items={movie} title="Recommended Movies" />
+                    <Upcomming items={movie.data} title="Recommended Movies" />
                 </>
             ) : (
                 'no'

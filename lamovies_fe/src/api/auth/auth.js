@@ -1,44 +1,17 @@
 import axiosClient from '~/api/axios/axiosClient';
-import { setAuthToken } from '../../service/auth/auth-header';
 
 const END_POINT = {
-    AUTH: 'Auth',
+    AUTH: 'authen',
     LOGIN: 'login',
     REGISTER: 'register',
     REFRESH_TOKEN: 'refreshToken',
+    ME: 'me',
+    LOGOUT: 'logout',
 };
-const AuthLogin = (username, password) => {
-    return axiosClient
-        .post(
-            `${END_POINT.AUTH}/${END_POINT.LOGIN}`,
-            {
-                username,
-                password,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            },
-        )
-        .then((response) => {
-            if (response.status === 200) {
-                console.log(response.data.token);
-                localStorage.setItem('token', response.data.token);
-                setAuthToken(response.data.token);
-                window.location.href = '/';
-            } else {
-                this.setState({ error: response.data.error });
-                console.log(response.data.error);
-            }
-        })
-        .catch((error) => {
-            if (error.response) {
-                this.setState({ error: error.response.data.error });
-                console.log(error.response.data.error);
-            } else {
-                console.log('Error:', error.message);
-            }
-        });
+const GetMyInfo = () => {
+    return axiosClient.get(`${END_POINT.AUTH}/${END_POINT.ME}`);
 };
-export { AuthLogin };
+const Logout = () => {
+    return axiosClient.get(`${END_POINT.AUTH}/${END_POINT.LOGOUT}`, { withCredentials: true });
+};
+export { GetMyInfo, Logout };

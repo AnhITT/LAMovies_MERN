@@ -1,22 +1,21 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import AuthService from "../../service/auth-service";
 
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import "./login.css";
 
 const Login = () => {
-    const [username, setUsername] = useState("");
+    const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const validate = () => {
-        if (!username && !password) {
+        if (!userName && !password) {
             setError({ error: "Please enter username and password!" });
             return false;
-        } else if (!username) {
+        } else if (!userName) {
             setError({ error: "Please enter a username!" });
             return false;
         } else if (!password) {
@@ -31,8 +30,8 @@ const Login = () => {
         if (validate()) {
             try {
                 const response = await axios.post(
-                    "https://localhost:7279/api/Auth/login",
-                    { username, password },
+                    "http://localhost:3000/authen/loginadmin",
+                    { userName, password },
                     {
                         headers: {
                             "Content-Type": "application/json",
@@ -41,19 +40,13 @@ const Login = () => {
                 );
 
                 if (response.status === 200) {
-                    const token = response.data.token;
-                    localStorage.setItem("token", token);
-                    if (!AuthService.checkRoleUser()) {
-                        setError({ error: "User does not have admin role!" });
-                    } else {
-                        navigate("/");
-                    }
+                    navigate("/");
                 } else {
-                    setError({ error: response.data.error });
+                    setError({ error: response.data });
                 }
             } catch (error) {
                 if (error.response) {
-                    setError({ error: error.response.data.error });
+                    setError({ error: error.response.data.data });
                 } else {
                     console.log("Error:", error.message);
                 }
@@ -72,7 +65,7 @@ const Login = () => {
                         name="username"
                         id="username"
                         placeholder="Enter your username"
-                        value={username}
+                        value={userName}
                         onChange={(e) => setUsername(e.target.value)}
                     />
                 </FormGroup>

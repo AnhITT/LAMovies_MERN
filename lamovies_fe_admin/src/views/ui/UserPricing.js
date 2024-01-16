@@ -1,14 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Table, Card, CardTitle, CardBody, Button } from "reactstrap";
+import { Row, Col, Table, Card, CardTitle, CardBody } from "reactstrap";
 import { GetUserPricing } from "../../api/pricing";
+import { GetUserByIdAPI } from "../../api/account";
+
 const UserPricing = () => {
     const [items, setItems] = useState([]);
+    const [userDetails, setUserDetails] = useState({});
+
     useEffect(() => {
         fetchData();
     }, []);
+
     const fetchData = async () => {
-        setItems(await GetUserPricing());
+        const data = await GetUserPricing();
+        setItems(data.data);
+
+        const promises = data.data.map(async (item) => {
+            const userDetail = await getUserDetails(item.users);
+            setUserDetails((prevDetails) => ({
+                ...prevDetails,
+                [item.users]: userDetail,
+            }));
+        });
+
+        await Promise.all(promises);
     };
+
+    const getUserDetails = async (userId) => {
+        const userData = await GetUserByIdAPI(userId);
+        return userData.data;
+    };
+
     const formatDateTime = (dateTimeString) => {
         const dateTime = new Date(dateTimeString);
         const formattedDateTime = dateTime.toLocaleString("en-GB", {
@@ -21,24 +43,25 @@ const UserPricing = () => {
         });
         return formattedDateTime;
     };
-    const formatRemainingTime = (remainingTime) => {
-        const timeParts = remainingTime.split(":");
-        const days = parseInt(timeParts[0]);
-        const timeString = timeParts.slice(1).join(":");
-        const remainingTimeSpan = `${days} ${timeString}`;
 
-        const remainingTimeObj = {
-            days: days,
-            hours: parseInt(timeParts[1]),
-            minutes: parseInt(timeParts[2]),
-            seconds: parseFloat(timeParts[3]),
-        };
+    const calculateRemainingTime = (endTime) => {
+        const currentTime = new Date();
+        const endDateTime = new Date(endTime);
+        let remainingMilliseconds = endDateTime - currentTime;
 
-        if (remainingTimeObj.days < 0) {
+        if (remainingMilliseconds < 0) {
             return "Hết hạn";
-        } else {
-            return `${remainingTimeObj.days}d ${remainingTimeObj.hours}h ${remainingTimeObj.minutes}m`;
         }
+
+        const days = Math.floor(remainingMilliseconds / (24 * 60 * 60 * 1000));
+        remainingMilliseconds %= 24 * 60 * 60 * 1000;
+
+        const hours = Math.floor(remainingMilliseconds / (60 * 60 * 1000));
+        remainingMilliseconds %= 60 * 60 * 1000;
+
+        const minutes = Math.floor(remainingMilliseconds / (60 * 1000));
+
+        return `${days}d ${hours}h ${minutes}m`;
     };
 
     return (
@@ -66,8 +89,18 @@ const UserPricing = () => {
                                 <tbody>
                                     {items.map((item, index) => (
                                         <tr key={index} className="border-top">
-                                            <td> {item.userNameUser}</td>
-                                            <td> {item.fullNameUser}</td>
+                                            <td>
+                                                {
+                                                    userDetails[item.users]
+                                                        ?.userName
+                                                }
+                                            </td>
+                                            <td>
+                                                {
+                                                    userDetails[item.users]
+                                                        ?.fullName
+                                                }
+                                            </td>
                                             <td>
                                                 {formatDateTime(item.startTime)}
                                             </td>
@@ -75,8 +108,8 @@ const UserPricing = () => {
                                                 {formatDateTime(item.endTime)}
                                             </td>
                                             <td>
-                                                {formatRemainingTime(
-                                                    item.remainingTime
+                                                {calculateRemainingTime(
+                                                    item.endTime
                                                 )}
                                             </td>
                                         </tr>

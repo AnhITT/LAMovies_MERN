@@ -1,29 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './style.css';
-import { GetInfoPricing } from '~/api/pricing/pricing';
-import AuthService from '~/service/auth/auth-service';
+import { AppContext } from '~/context/AppProvider';
 import { Link } from 'react-router-dom';
+import { Check } from '~/api/order/Order';
 
 const UserInfo = () => {
-    const [currentUser, setCurrentUser] = useState(undefined);
-    const [infoPricing, setInfoPricing] = useState(undefined);
-    useEffect(() => {
-        const fetchData = async () => {
-            if (AuthService.getCurrentUser()) {
-                setCurrentUser(await AuthService.getCurrentUser());
-            }
-        };
-        fetchData();
-    }, []);
+    const { currentUser } = useContext(AppContext);
+    const [check, setCheck] = useState();
+    const [remainingTime, setRemainingTime] = useState('');
     useEffect(() => {
         const fetchPricing = async () => {
-            if (currentUser) {
-                setInfoPricing(await GetInfoPricing(currentUser.Id));
+            if (currentUser && currentUser._id) {
+                console.log(currentUser);
+                const result = await Check(currentUser._id);
+                if (result) {
+                    setCheck(result.data);
+
+                    const endTime = new Date(result.data.endTime);
+                    const currentTime = new Date();
+                    const diffInMilliseconds = endTime - currentTime;
+                    if (diffInMilliseconds <= 0) {
+                        setRemainingTime('Hết hạn');
+                    } else {
+                        const days = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diffInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+                        setRemainingTime(`${days}d ${hours}h ${minutes}m`);
+                    }
+                }
             }
         };
 
         fetchPricing();
     }, [currentUser]);
+
     const formatDateTime = (dateTimeString) => {
         const dateTime = new Date(dateTimeString);
         const formattedDateTime = dateTime.toLocaleString('en-GB', {
@@ -35,25 +45,6 @@ const UserInfo = () => {
             hour12: false,
         });
         return formattedDateTime;
-    };
-    const formatRemainingTime = (remainingTime) => {
-        const timeParts = remainingTime.split(':');
-        const days = parseInt(timeParts[0]);
-        const timeString = timeParts.slice(1).join(':');
-        const remainingTimeSpan = `${days} ${timeString}`;
-
-        const remainingTimeObj = {
-            days: days,
-            hours: parseInt(timeParts[1]),
-            minutes: parseInt(timeParts[2]),
-            seconds: parseFloat(timeParts[3]),
-        };
-
-        if (remainingTimeObj.days < 0) {
-            return 'Hết hạn';
-        } else {
-            return `${remainingTimeObj.days}d ${remainingTimeObj.hours}h ${remainingTimeObj.minutes}m`;
-        }
     };
     return (
         <>
@@ -71,13 +62,13 @@ const UserInfo = () => {
                                             type="text"
                                             placeholder="Full Name"
                                             required
-                                            value={currentUser ? currentUser.FullName : ''}
+                                            value={currentUser ? currentUser.fullName : ''}
                                         />
                                         <input
                                             type="text"
                                             placeholder="Username"
                                             required
-                                            value={currentUser ? currentUser.Username : ''}
+                                            value={currentUser ? currentUser.userName : ''}
                                         />
                                     </div>
                                 </li>
@@ -87,69 +78,70 @@ const UserInfo = () => {
                                             type="email"
                                             placeholder="Email"
                                             required
-                                            value={currentUser ? currentUser.Email : ''}
+                                            value={currentUser ? currentUser.email : ''}
                                         />
                                         <input
                                             type="text"
                                             placeholder="Date Birthday"
-                                            value={currentUser ? currentUser.Date : ''}
+                                            value={'Date Birthday:' + currentUser ? currentUser.dateBirthday : ''}
                                         />
                                     </div>
                                 </li>
-                                <li>
-                                    <div className="grid grid-2">
-                                        <input
-                                            type="text"
-                                            placeholder="text"
-                                            disabled
-                                            required
-                                            value={infoPricing ? infoPricing.namePricing : ''}
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Date Birthday"
-                                            disabled
-                                            value={
-                                                'Start time:' + formatDateTime(infoPricing ? infoPricing.startTime : '')
-                                            }
-                                        />
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="grid grid-2">
-                                        <input
-                                            type="text"
-                                            placeholder="Email"
-                                            disabled
-                                            required
-                                            value={'End time:' + formatDateTime(infoPricing ? infoPricing.endTime : '')}
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Date Birthday"
-                                            disabled
-                                            value={
-                                                'Remaining Time: ' +
-                                                formatRemainingTime(infoPricing ? infoPricing.remainingTime : '')
-                                            }
-                                        />
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="grid grid-3 btn-checkout">
-                                        <Link to="/changepassword">
-                                            <button className="btn-paypal" type="submit">
-                                                CHANGE PASSWORD
-                                            </button>
-                                        </Link>
+                                {check != null ? (
+                                    <>
+                                        <li>
+                                            <div className="grid grid-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="text"
+                                                    disabled
+                                                    required
+                                                    value={check && check.users}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Date Birthday"
+                                                    disabled
+                                                    value={'Start time:' + formatDateTime(check ? check.startTime : '')}
+                                                />
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div className="grid grid-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Email"
+                                                    disabled
+                                                    required
+                                                    value={'End time:' + formatDateTime(check ? check.endTime : '')}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Date Birthday"
+                                                    disabled
+                                                    value={'Remaining Time: ' + (remainingTime ? remainingTime : '')}
+                                                />
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div className="grid grid-3 btn-checkout">
+                                                <Link to="/changepassword">
+                                                    <button className="btn-paypal" type="submit">
+                                                        CHANGE PASSWORD
+                                                    </button>
+                                                </Link>
 
-                                        <Link to="/">
-                                            <button className="btn-grid" type="reset">
-                                                BACK
-                                            </button>
-                                        </Link>
-                                    </div>
-                                </li>
+                                                <Link to="/">
+                                                    <button className="btn-grid" type="reset">
+                                                        BACK
+                                                    </button>
+                                                </Link>
+                                            </div>
+                                        </li>
+                                    </>
+                                ) : (
+                                    <></>
+                                )}
                             </ul>
                         </form>
                     </section>

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import './style.css';
 import axios from 'axios';
-import { setAuthToken } from '../../service/auth/auth-header';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Register = () => {
     const [data, setData] = useState({
-        username: '',
+        userName: '',
         password: '',
         rePassword: '',
         email: '',
@@ -23,7 +23,7 @@ const Register = () => {
 
     const validate = () => {
         if (
-            !data.username ||
+            !data.userName ||
             !data.password ||
             !data.fullName ||
             !data.dateBirthday ||
@@ -44,12 +44,11 @@ const Register = () => {
         if (validate()) {
             axios
                 .post(
-                    'https://localhost:7279/api/Auth/register',
+                    'http://localhost:3000/authen/register',
                     {
-                        username: data.username,
+                        userName: data.userName,
                         email: data.email,
                         password: data.password,
-                        passwordConfirm: data.rePassword,
                         fullName: data.fullName,
                         dateBirthday: data.dateBirthday,
                     },
@@ -61,10 +60,15 @@ const Register = () => {
                 )
                 .then((response) => {
                     if (response.status === 200) {
-                        console.log(response.data.token);
-                        localStorage.setItem('token', response.data.token);
-                        setAuthToken(response.data.token);
-                        window.location.href = '/';
+                        toast.success('Registration successful!', {
+                            position: 'top-right',
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                        });
                     } else {
                         setError({ error: response.data.error });
                         console.log(response.data.error);
@@ -98,8 +102,8 @@ const Register = () => {
                                 className="input100"
                                 type="text"
                                 placeholder="Username"
-                                value={data.username}
-                                name="username"
+                                value={data.userName}
+                                name="userName"
                                 onChange={handleChange}
                             />
                             <span className="focus-input100"></span>
@@ -188,6 +192,18 @@ const Register = () => {
                     </form>
                 </div>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
         </div>
     );
 };

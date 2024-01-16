@@ -7,10 +7,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import {
     UpdateUserAPI,
     GetUserByIdAPI,
-    GetAllRolesAPI,
     AddAccountAPI,
     DeleteAccountAPI,
-    DisabledAccountAPI,
     GetAccountAPI,
 } from "../../api/account";
 
@@ -19,38 +17,45 @@ const ProjectTables = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-    const [confirmationModal, setConfirmationModal] = useState(false);
-    const [accountIdToDelete, setAccountIdToDelete] = useState(null);
     const [addUserModal, setAddUserModal] = useState(false);
     const [error, setError] = useState([]);
+    const [successModal, setSuccessModal] = useState(false);
+    const [editUserModal, setEditUserModal] = useState(false);
+    const [updateSuccess, setUpdateSuccess] = useState(false);
     const [newUser, setNewUser] = useState({
-        username: "",
+        userName: "",
         email: "",
         password: "",
         passwordConfirm: "",
         fullName: "",
         dateBirthday: "",
         role: "",
+        isActive: true,
     });
-    const [successModal, setSuccessModal] = useState(false);
-    const [roles, setRoles] = useState([]);
     const [editUser, setEditUser] = useState({
-        id: "",
+        _id: "",
         userName: "",
         email: "",
         fullName: "",
         dateBirthday: "",
         status: null,
-        role: [],
+        role: "",
+        isActive: "",
     });
-    const [editUserModal, setEditUserModal] = useState(false);
     useEffect(() => {
         fetchData();
     }, []);
     const fetchData = async () => {
-        setItems(await GetAccountAPI());
-        setRoles(await GetAllRolesAPI());
+        try {
+            const response = await GetAccountAPI();
+            if (response && response.data) {
+                setItems(response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
     };
+
     const itemsPerPage = 5;
     const handlePageClick = (data) => {
         setCurrentPage(data.selected);
@@ -72,29 +77,21 @@ const ProjectTables = () => {
         setSearchResults(filteredResults);
         setCurrentPage(1);
     };
-    const ChangeStatus = async (id, status) => {
+    const ChangeStatus = async (id) => {
         try {
-            await DisabledAccountAPI(id, status);
+            await DeleteAccountAPI(id);
             fetchData();
         } catch (error) {
             console.error("Error changing status:", error);
         }
     };
-    const confirmDeleteAccount = async () => {
-        try {
-            await DeleteAccountAPI(accountIdToDelete);
-            fetchData();
-            setConfirmationModal(false);
-        } catch (error) {
-            console.error("Error deleting account:", error);
-        }
-    };
+
     const validate = () => {
         const errors = [];
 
-        if (!newUser.username) {
+        if (!newUser.userName) {
             errors.push("Username is required.");
-        } else if (newUser.username.length < 6) {
+        } else if (newUser.userName.length < 6) {
             errors.push("Username must be at least 6 characters.");
         }
         if (!newUser.password) {
@@ -154,49 +151,30 @@ const ProjectTables = () => {
     };
     const handleEditUser = async (userId) => {
         try {
-            const user = await GetUserByIdAPI(userId);
-
+            const data = await GetUserByIdAPI(userId);
+            const user = data.data;
             setEditUser({
-                id: user.id,
+                _id: user._id,
                 userName: user.userName,
                 email: user.email,
                 fullName: user.fullName,
                 dateBirthday: user.dateBirthday,
                 status: user.status,
                 role: user.role,
+                isActive: user.isActive,
             });
-            console.log(editUser.role);
             setEditUserModal(true);
         } catch (error) {
             console.error("Error fetching user data for edit:", error);
         }
     };
-    const convertRoleToArray = (user) => {
-        return {
-            ...user,
-            role: user.role ? [user.role] : [],
-        };
-    };
-    const convertStatusToBool = (user) => {
-        return {
-            ...user,
-            status:
-                user.status === "true"
-                    ? true
-                    : user.status === "false"
-                    ? false
-                    : null,
-        };
-    };
+
     const handleUpdateUser = async () => {
         try {
-            // Gọi API để cập nhật thông tin người dùng
-            await UpdateUserAPI(editUser);
-
-            // Đóng form chỉnh sửa
+            await UpdateUserAPI(editUser._id, editUser);
+            setUpdateSuccess(true);
             setEditUserModal(false);
 
-            // Làm mới danh sách người dùng
             fetchData();
         } catch (error) {
             console.error("Error updating user:", error);
@@ -205,7 +183,9 @@ const ProjectTables = () => {
     const toggleEditUserModal = () => {
         setEditUserModal(!editUserModal);
     };
-
+    const resetUpdateSuccess = () => {
+        setUpdateSuccess(false);
+    };
     const displayItems = searchTerm !== "" ? searchResults : currentItems;
     return (
         <div>
@@ -269,31 +249,26 @@ const ProjectTables = () => {
                                         </div>
                                     </td>
                                     <td>{item.fullName}</td>
-                                    <td>
-                                        {item.role.map((role, index) => (
-                                            <span key={index}>
-                                                {role}
-                                                {index < item.role.length - 1 &&
-                                                    ", "}
-                                            </span>
-                                        ))}
-                                    </td>
+                                    <td>{item.role}</td>
 
                                     <td>
-                                        {item.status === true ? (
+                                        {item.isActive === true ? (
                                             <span className="p-2 bg-success rounded-circle d-inline-block ms-3"></span>
                                         ) : (
                                             <span className="p-2 bg-danger rounded-circle d-inline-block ms-3"></span>
                                         )}
                                     </td>
                                     <td className="d-flex justify-content-around pt-3">
-                                        {item.status === true ? (
+                                        {item.isActive === true ? (
                                             <Button
                                                 className="btn"
                                                 color="secondary"
                                                 size="sm"
                                                 onClick={() =>
-                                                    ChangeStatus(item.id, false)
+                                                    ChangeStatus(
+                                                        item._id,
+                                                        false
+                                                    )
                                                 }
                                             >
                                                 Disabled
@@ -304,7 +279,7 @@ const ProjectTables = () => {
                                                 color="success"
                                                 size="sm"
                                                 onClick={() =>
-                                                    ChangeStatus(item.id, true)
+                                                    ChangeStatus(item._id, true)
                                                 }
                                             >
                                                 Enable
@@ -316,22 +291,10 @@ const ProjectTables = () => {
                                             color="primary"
                                             size="sm"
                                             onClick={() =>
-                                                handleEditUser(item.id)
+                                                handleEditUser(item._id)
                                             }
                                         >
                                             Edit
-                                        </Button>
-
-                                        <Button
-                                            className="btn"
-                                            color="danger"
-                                            size="sm"
-                                            onClick={() => {
-                                                setAccountIdToDelete(item.id);
-                                                setConfirmationModal(true);
-                                            }}
-                                        >
-                                            Delete
                                         </Button>
                                     </td>
                                 </tr>
@@ -357,36 +320,6 @@ const ProjectTables = () => {
                     </Table>
                 </CardBody>
             </Card>
-            <Modal
-                isOpen={confirmationModal}
-                toggle={() => setConfirmationModal(false)}
-            >
-                <ModalBody>
-                    <p className="text-center text-danger">
-                        Are you sure you want to delete this account?
-                    </p>
-                    <div className="d-flex justify-content-center">
-                        <div className="col-2">
-                            <Button
-                                className="btn"
-                                color="danger"
-                                onClick={confirmDeleteAccount}
-                            >
-                                Delete
-                            </Button>
-                        </div>
-                        <div className="col-1">
-                            <Button
-                                className="btn"
-                                color="secondary"
-                                onClick={() => setConfirmationModal(false)}
-                            >
-                                Cancel
-                            </Button>
-                        </div>
-                    </div>
-                </ModalBody>
-            </Modal>
             <Modal isOpen={addUserModal} toggle={toggleAddUserModal}>
                 <ModalHeader toggle={toggleAddUserModal}>
                     Add New User
@@ -401,11 +334,11 @@ const ProjectTables = () => {
                                 type="text"
                                 className="form-control"
                                 id="username"
-                                value={newUser.username}
+                                value={newUser.userName}
                                 onChange={(e) =>
                                     setNewUser({
                                         ...newUser,
-                                        username: e.target.value,
+                                        userName: e.target.value,
                                     })
                                 }
                             />
@@ -482,6 +415,7 @@ const ProjectTables = () => {
                                 }
                             />
                         </div>
+
                         <div className="mb-3">
                             <label htmlFor="role" className="form-label">
                                 Role
@@ -500,11 +434,12 @@ const ProjectTables = () => {
                                 <option value="" disabled>
                                     Select a role
                                 </option>
-                                {roles.map((role) => (
-                                    <option key={role} value={role}>
-                                        {role}
-                                    </option>
-                                ))}
+                                <option key="user" value="user">
+                                    user
+                                </option>
+                                <option key="admin" value="admin">
+                                    admin
+                                </option>
                             </select>
                         </div>
                     </form>
@@ -602,25 +537,6 @@ const ProjectTables = () => {
                                     }
                                 />
                             </div>
-                            <div className="mb-3">
-                                <label className="form-label">Status</label>
-                                <select
-                                    id="status"
-                                    className="form-select"
-                                    value={editUser.status}
-                                    onChange={(e) =>
-                                        setEditUser((prevEditUser) => ({
-                                            ...prevEditUser,
-                                            ...convertStatusToBool({
-                                                status: e.target.value,
-                                            }),
-                                        }))
-                                    }
-                                >
-                                    <option value={true}>Active</option>
-                                    <option value={false}>Inactive</option>
-                                </select>
-                            </div>
 
                             <label className="form-label">Role</label>
                             <div className="mb-3">
@@ -631,20 +547,20 @@ const ProjectTables = () => {
                                     onChange={(e) =>
                                         setEditUser((prevEditUser) => ({
                                             ...prevEditUser,
-                                            ...convertRoleToArray({
-                                                role: e.target.value,
-                                            }),
+
+                                            role: e.target.value,
                                         }))
                                     }
                                 >
                                     <option value="" disabled>
                                         Select a role
                                     </option>
-                                    {roles.map((role) => (
-                                        <option key={role} value={role}>
-                                            {role}
-                                        </option>
-                                    ))}
+                                    <option key="user" value="user">
+                                        user
+                                    </option>
+                                    <option key="admin" value="admin">
+                                        admin
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -659,6 +575,15 @@ const ProjectTables = () => {
                     </Button>
                 </ModalFooter>
             </Modal>
+            {updateSuccess && (
+                <Modal isOpen={updateSuccess} toggle={resetUpdateSuccess}>
+                    <ModalBody>
+                        <p className="text-center text-success">
+                            User updated successfully!
+                        </p>
+                    </ModalBody>
+                </Modal>
+            )}
         </div>
     );
 };

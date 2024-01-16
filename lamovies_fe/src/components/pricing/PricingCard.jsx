@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useEffect, useState, useContext } from 'react';
+import { AppContext } from '~/context/AppProvider';
 import { Link } from 'react-router-dom';
 import './pricing.css';
-import AuthService from '~/service/auth/auth-service';
 
-const Pricing = ({ item: { id, name, price, time } }) => {
-    const [currentUser, setCurrentUser] = useState(undefined);
-    useEffect(() => {
-        if (AuthService.getCurrentUser()) {
-            setCurrentUser(AuthService.getCurrentUser());
-        }
-    }, []);
+const PricingCard = ({ item: { _id, name, price, time } }) => {
+    const { currentUser } = useContext(AppContext);
+
     return (
         <section>
             <hgroup>
@@ -23,9 +18,9 @@ const Pricing = ({ item: { id, name, price, time } }) => {
             <p>Hollywood Movies: &times;</p>
             <p>New Movies: &times;</p>
             <p>StreamIt Special: &times;</p>
-            {currentUser ? (
+            {currentUser.userName ? (
                 <div>
-                    <Link to={`/checkout/${id}`}>
+                    <Link to={{ pathname: `/checkout/${_id}`, state: { item: { _id, name, price, time } } }}>
                         <button className="btnPricing">Subscribe {name}</button>
                     </Link>
                 </div>
@@ -40,4 +35,4 @@ const Pricing = ({ item: { id, name, price, time } }) => {
     );
 };
 
-export default Pricing;
+export default PricingCard;

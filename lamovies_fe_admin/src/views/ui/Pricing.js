@@ -7,7 +7,8 @@ const Pricing = () => {
         fetchData();
     }, []);
     const fetchData = async () => {
-        setItems(await GetPricingAPI());
+        const pricing = await GetPricingAPI();
+        setItems(pricing.data);
     };
 
     return (

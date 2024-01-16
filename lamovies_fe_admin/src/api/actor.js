@@ -1,9 +1,8 @@
 import axiosClient from "../api/axiosClient";
 
 const END_POINT = {
-    ACTORS: "Actor",
-    CreateActor: "CreateActor",
-    GetActorById: "GetActorById",
+    ACTORS: "actors",
+    CreateActor: "add",
 };
 
 const GetActorAPI = () => {
@@ -21,15 +20,13 @@ const AddActorAPI = (accountData) => {
     );
 };
 const GetActorById = (id) => {
-    return axiosClient.get(
-        `${END_POINT.ACTORS}/${END_POINT.GetActorById}?id=${id}`
-    );
+    return axiosClient.get(`${END_POINT.ACTORS}/${id}`);
 };
 const DeleteActorAPI = (id) => {
-    return axiosClient.delete(`${END_POINT.ACTORS}?id=${id}`);
+    return axiosClient.delete(`${END_POINT.ACTORS}/delete/${id}`);
 };
 const UpdateActorAPI = (id, data) => {
-    return axiosClient.put(`${END_POINT.ACTORS}?id=${id}`, data, {
+    return axiosClient.put(`${END_POINT.ACTORS}/edit/${id}`, data, {
         headers: {
             "Content-Type": "application/json",
         },

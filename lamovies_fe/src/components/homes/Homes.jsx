@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from "react"
-import "./home.css"
-import Home from "./Home"
-import { GetMovieAPI } from "~/api/homes/home"
+import React, { useEffect, useState } from 'react';
+import './home.css';
+import Home from './Home';
 
-const Homes = () => {
-  const [movie, setMovie] = useState([]);
-  useEffect(()=>{
-    fetchData();
-  }, []);
-  const fetchData = async () => {
-    setMovie(await GetMovieAPI());
-  }
-  return (
-    <>
-      <section className='home'>
-        <Home items={movie} />
-      </section>
-      <div className='mragin'></div>
-    </>
-  )
-}
+const Homes = ({ items }) => {
+    return (
+        <>
+            <section className="home">
+                <Home items={items} />
+            </section>
+            <div className="mragin"></div>
+        </>
+    );
+};
 
-export default Homes
+export default Homes;
