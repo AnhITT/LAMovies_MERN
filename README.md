@@ -55,12 +55,12 @@ The backend should now be running at http://localhost:3000.
 3. Frontend Setup:
 
 - In both frontend_customer and frontend_admin directories, create a .env file with the following content:
--- For customer frontend:
+1. For customer frontend:
 ```bash
 REACT_APP_URL_API=http://localhost:3000
 PORT=3001
 ```
--- For admin frontend:
+2. For admin frontend:
 ```bash
 REACT_APP_URL_API=http://localhost:3000
 PORT=3002
@@ -72,7 +72,7 @@ PORT=3002
 ```bash
 npm start
 ```
-The client interface will now run at http://localhost:3000.
+The client interface will now run at http://localhost:3001.
 - For admin frontend, in the frontend_admin directory, run:
 
 ```bash
