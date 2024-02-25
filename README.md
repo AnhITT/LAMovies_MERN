@@ -23,15 +23,15 @@ cd LAMovies_MERN
 
 ```bash
 # Install backend dependencies
-cd backend
+cd lamovies_be
 npm install
 
 # Install frontend dependencies for customer
-cd ../frontend_customer
+cd ../lamovies_fe
 npm install
 
 # Install frontend dependencies for admin
-cd ../frontend_admin
+cd ../lamovies_fe_admin
 npm install
 ```
 # Usage
@@ -39,10 +39,9 @@ npm install
 
 - Ensure MongoDB is installed and running.
 
-- In the backend directory, create a .env file with the following environment variables:
+- In the backend directory, change a app.js file with the following environment variables:
 ```bash
-MONGODB_URI=your_mongodb_uri
-PORT=5000
+mongoose.connect("mongodb://127.0.0.1:27017/lamovies_api");
 ```
 2. Starting the Backend:
 
@@ -51,13 +50,20 @@ PORT=5000
 ```bash
 npm start
 ```
+The backend should now be running at http://localhost:3000.
+
 3. Frontend Setup:
 
 - In both frontend_customer and frontend_admin directories, create a .env file with the following content:
-
+-- For customer frontend:
 ```bash
-
-REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_URL_API=http://localhost:3000
+PORT=3001
+```
+-- For admin frontend:
+```bash
+REACT_APP_URL_API=http://localhost:3000
+PORT=3002
 ```
 4. Starting the Frontend:
 
@@ -66,15 +72,17 @@ REACT_APP_API_URL=http://localhost:5000/api
 ```bash
 npm start
 ```
+The client interface will now run at http://localhost:3000.
 - For admin frontend, in the frontend_admin directory, run:
 
 ```bash
 npm start
 ```
+The admin interface will now run at http://localhost:3002.
 5. Access the applications in your browser:
 
-- Customer frontend: http://localhost:3000
-- Admin frontend: http://localhost:3001
+- Customer frontend: http://localhost:3001
+- Admin frontend: http://localhost:3002
 # Contributing
 Contributions are welcome! Feel free to open an issue or submit a pull request.
 
