@@ -1,7 +1,7 @@
 # LAMovies MERN Project
 This is a MERN (MongoDB, Express.js, React.js, Node.js) stack project consisting of three main components:
 
-- Backend Node.js: Provides the API endpoints.
+- Back-end: Provides API endpoints using Express.js.
 - Front-end Customer: Built with ReactJS, this part of the application is intended for general users or customers.
 - Front-end Admin: Also developed with ReactJS, this portion of the project is designed for administrative purposes.
 
