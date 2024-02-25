@@ -1,26 +1,27 @@
-LAMovies MERN Project
+# LAMovies MERN Project
 This is a MERN (MongoDB, Express.js, React.js, Node.js) stack project consisting of three main components:
 
-Backend Node.js: Provides the API endpoints.
-Front-end Customer: Built with ReactJS, this part of the application is intended for general users or customers.
-Front-end Admin: Also developed with ReactJS, this portion of the project is designed for administrative purposes.
-Installation
+- Backend Node.js: Provides the API endpoints.
+- Front-end Customer: Built with ReactJS, this part of the application is intended for general users or customers.
+- Front-end Admin: Also developed with ReactJS, this portion of the project is designed for administrative purposes.
+
+# Installation
 To set up this project locally, follow these steps:
 
-Clone the repository:
+1. Clone the repository:
 
-bash
-Copy code
+```bash
 git clone https://github.com/AnhITT/LAMovies_MERN.git
-Navigate into the project directory:
+```
 
-bash
-Copy code
+2. Navigate into the project directory:
+
+```bash
 cd LAMovies_MERN
-Install dependencies for both backend and frontend:
+```
+3. Install dependencies for both backend and frontend:
 
-bash
-Copy code
+```bash
 # Install backend dependencies
 cd backend
 npm install
@@ -32,49 +33,50 @@ npm install
 # Install frontend dependencies for admin
 cd ../frontend_admin
 npm install
-Usage
-Backend Setup:
+```
+# Usage
+1. Backend Setup:
 
-Ensure MongoDB is installed and running.
+- Ensure MongoDB is installed and running.
 
-In the backend directory, create a .env file with the following environment variables:
-
-makefile
-Copy code
+- In the backend directory, create a .env file with the following environment variables:
+```bash
 MONGODB_URI=your_mongodb_uri
 PORT=5000
-Starting the Backend:
+```
+2. Starting the Backend:
 
-In the backend directory, run:
+- In the backend directory, run:
 
-bash
-Copy code
+```bash
 npm start
-Frontend Setup:
+```
+3. Frontend Setup:
 
-In both frontend_customer and frontend_admin directories, create a .env file with the following content:
+- In both frontend_customer and frontend_admin directories, create a .env file with the following content:
 
-bash
-Copy code
+```bash
+
 REACT_APP_API_URL=http://localhost:5000/api
-Starting the Frontend:
+```
+4. Starting the Frontend:
 
-For customer frontend, in the frontend_customer directory, run:
+- For customer frontend, in the frontend_customer directory, run:
 
-bash
-Copy code
+```bash
 npm start
-For admin frontend, in the frontend_admin directory, run:
+```
+- For admin frontend, in the frontend_admin directory, run:
 
-bash
-Copy code
+```bash
 npm start
-Access the applications in your browser:
+```
+5. Access the applications in your browser:
 
-Customer frontend: http://localhost:3000
-Admin frontend: http://localhost:3001
-Contributing
+- Customer frontend: http://localhost:3000
+- Admin frontend: http://localhost:3001
+# Contributing
 Contributions are welcome! Feel free to open an issue or submit a pull request.
 
-License
+# License
 This project is licensed under the MIT License.
